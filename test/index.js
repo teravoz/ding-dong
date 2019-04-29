@@ -1,5 +1,7 @@
+'use strict';
+
 var MemoryStream = require('memorystream');
-var agi = require('./../lib')
+var AgiServer = require('./../lib');
 var expect = require('expect.js');
 var Context = require('./../lib/context');
 var state = require('./../lib/state');
@@ -46,7 +48,6 @@ describe('Context', function() {
       expect(vars['agi_uniqueid']).to.eql('13507138.14');
       expect(vars['agi_arg_1']).to.eql('test');
       done();
-
     });
 
     it('puts context into waiting state', function() {
@@ -85,7 +86,6 @@ describe('Context', function() {
           expect(msg.result).to.eql('0');
           done();
         });
-
       });
 
       it('invokes callback with response', function(done) {
@@ -101,7 +101,6 @@ describe('Context', function() {
         context.exec('test', 'boom').then(function(){
           done();
         });
-        
       });
 
       it('includes the response value', function(done) {
@@ -119,12 +118,10 @@ describe('Context', function() {
           expect(msg.value).to.eql('a value');
           done();
         });
-
       });
     });
 
     describe('two commands', function(done) {
-
       it('invokes two callbacks', function(done) {
         var context = this.context;
 
@@ -162,7 +159,7 @@ describe('Context', function() {
         this.context.on('hangup', done);
         process.nextTick(function() {
           context.stream.write('200 result=-1\nHANGUP\n');
-        })
+        });
       });
     });
   });
@@ -475,7 +472,7 @@ describe('Context', function() {
 
   describe('tddMode', function() {
     it('sends correct command', function() {
-      this.context.tddMode("on");
+      this.context.tddMode('on');
       expect(this.context.sent.join('')).to.eql('TDD MODE on\n');
     });
   });
@@ -501,7 +498,7 @@ describe('Context', function() {
           expect(err).to.eql('test');
           done();
         });
-        this.context.stream.emit('error', "test");
+        this.context.stream.emit('error', 'test');
       });
     });
 
@@ -518,20 +515,20 @@ describe('Context', function() {
   });
 });
 
-describe('agi#createServer', function() {
+describe('AgiServer#createServer', function() {
   it('returns instance of net.Server', function() {
-    var net = require('net');
-    var server = (new agi()).start(3000);
-    expect(server instanceof net.Server).ok();
-
+    const net = require('net');
+    const agiServer = new AgiServer(() => {});
+    expect(agiServer.server instanceof net.Server).ok();
   });
 
   it('invokes callback when a new connection is established', function(done) {
-    var server = new agi(function(context) {
+    const agiServer = new AgiServer((context) => {
       expect(context instanceof Context);
       done();
-    }).start(3001);
+    }, { port: 3001 });
+    agiServer.init();
 
-    server.emit('connection', new MemoryStream());
+    agiServer.server.emit('connection', new MemoryStream());
   });
 });

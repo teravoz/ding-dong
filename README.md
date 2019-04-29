@@ -51,8 +51,13 @@ var handler = function (context) {
         });
 };
 
-var agi = new AGIServer(handler);
-agi.start(3000);
+const agiServer = new AgiServer(handler, { port: 3000 });
+agiServer.on('error', (err) => console.error(err));
+agiServer.on('close', () => console.log('Internal TCP server connection closed'));
+agiServer.init();
+agiServer.close()
+    .then(() => console.log('AGI server closed'))
+    .catch((err) => console.error(err));
 
 `````
 

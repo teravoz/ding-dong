@@ -1,19 +1,24 @@
-var AGIServer = require('./../lib/index');
+'use strict';
 
-var handler = function (context) {
-    context.onEvent('variables')        
-        .then(function (vars) {
-            console.log('vars', vars);
-            return context.streamFile('beep');
-        })
-        .then(function (result) {
-            return context.setVariable('RECOGNITION_RESULT', 'I\'m your father, Luc');
-        })
-        .then(function (result) {       
-            return context.end();
-        })
-        .fail(console.log);
+const AgiServer = require('ding-dong');
+
+const handler = async function (context) {
+  try {
+    await context.answer();
+    await context.streamFile('conf-adminmenu');
+    await context.hangup();
+  } finally {
+    context.close();
+  }
 };
 
-var agi = new AGIServer(handler, {debug: true});
-agi.start(3007);
+const agiServer = new AgiServer(handler, { port: 3082 });
+agiServer.on('error', (err) => console.error(err));
+agiServer.on('warn', (err) => console.warn(err));
+agiServer.on('close', () => console.log('Internal TCP server connection closed'));
+agiServer.init();
+setTimeout(() => {
+  agiServer.close()
+    .then(() => console.log('AGI server closed'))
+    .catch((err) => console.error(err));
+}, 60000);

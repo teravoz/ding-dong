@@ -1,12 +1,12 @@
 {
-  "author": "Sergey Dmitriev <serge.dmitriev@gmail.com>",
+  "author": "Zignd <zignd.igor@gmail.com>",
   "name": "ding-dong",
   "license": "MIT",
-  "description": "Write AGI-server quickly! (AGI - Asterisk Gateway Interface)",
+  "description": "AGI (Asterisk Gateway Interface) library for Node.js",
   "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/antirek/ding-dong.git"
+    "url": "git://github.com/teravoz/ding-dong.git"
   },
   "main": "lib/",
   "scripts": {

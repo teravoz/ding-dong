@@ -43,7 +43,7 @@ setTimeout(() => {
 
 `````
 [default]
-exten => 1000,1,AGI(agi://localhost:3000)
+exten => 1000,1,AGI(agi://localhost:3082)
 `````
 
 ## API

@@ -24,9 +24,7 @@ var context = function(cb) {
     ctx.sent.push(msg);
   };
 
-  ctx.once('variables', function(vars) {
-    cb(ctx);
-  });
+  ctx.waitReady().then(() => cb(ctx));
   
   writeVars(stream);
 };
@@ -512,23 +510,5 @@ describe('Context', function() {
         this.context.stream.emit('close', true);
       });
     });
-  });
-});
-
-describe('AgiServer#createServer', function() {
-  it('returns instance of net.Server', function() {
-    const net = require('net');
-    const agiServer = new AgiServer(() => {});
-    expect(agiServer.server instanceof net.Server).ok();
-  });
-
-  it('invokes callback when a new connection is established', function(done) {
-    const agiServer = new AgiServer((context) => {
-      expect(context instanceof Context);
-      done();
-    }, { port: 3001 });
-    agiServer.init();
-
-    agiServer.server.emit('connection', new MemoryStream());
   });
 });
